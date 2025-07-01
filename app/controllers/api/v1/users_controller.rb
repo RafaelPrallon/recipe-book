@@ -1,9 +1,10 @@
-class UsersController < ApplicationController
+class Api::V1::UsersController < ApplicationController
   before_action :set_user, only: %i[ show update destroy ]
 
   def index
-    @user = Queries::UserFilters.new(User.all).call(search_params)
-    render json: @recipes, status: :ok
+    @users = User.with_attached_avatar.allx
+    @users = UserFilters.new(@users).call(search_params)
+    render json: @users, status: :ok
   end
 
   def show

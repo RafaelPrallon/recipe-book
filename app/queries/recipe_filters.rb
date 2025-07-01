@@ -1,18 +1,16 @@
 
-module Queries
-  class RecipeFilters < BaseFilters
-    def call(params)
-      self.search do |query|
-        scoped = search_by_name(params[:name])
-        scoped = scoped.search_by_category(params[:category_name])
-        paginate(scoped, params[:page_number], params[:per_page])
-      end
+class RecipeFilters < BaseFilters
+  def call
+    self.search do
+      scoped = search_by_name(base_scope, params[:name])
+      scoped = search_by_category(scoped, params[:category_name])
+      paginate(scoped, params[:page_number], params[:per_page])
     end
+  end
 
-    private
+  private
 
-    def search_by_category(category_name = nil)
-      category_name ? scoped.joins(:categories).where(category: { name: category_name }) : scoped
-    end
+  def search_by_category(scoped, category_name = nil)
+    category_name ? scoped.where("category LIKE ?", "%#{category_name}%") : scoped
   end
 end

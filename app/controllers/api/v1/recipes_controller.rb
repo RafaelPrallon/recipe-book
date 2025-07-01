@@ -1,9 +1,15 @@
-class RecipesController < ApplicationController
+class Api::V1::RecipesController < ApplicationController
   before_action :set_recipe, only: %i[ show update destroy ]
 
   def index
-    @recipes = Queries::RecipeFilters.new(Recipe.all).call(search_params)
-    render json: @recipes, status: :ok
+    @recipes = Recipe.all.with_attached_photo
+    @recipes = RecipeFilters.new(@recipes, search_params).call if params[:search]
+
+    if @recipes.empty?
+      render json: "There's no recipe available at the moment. Try adding some recipes", status: :ok
+    else
+      render json: @recipes, status: :ok
+    end
   end
 
   def show
@@ -12,7 +18,7 @@ class RecipesController < ApplicationController
 
   def create
     @recipe = Recipe.new(recipe_params)
-    if recipe.save
+    if @recipe.save
       render json: @recipe, status: :created
     else
       render json: @recipe.errors, status: :unprocessable_entity
@@ -38,10 +44,10 @@ class RecipesController < ApplicationController
     end
 
     def search_params
-      params(:search).permit(:name, :category_name, :page_number, :per_page)
+      params.require(:search).permit(:name, :category_name, :page_number, :per_page)
     end
 
     def recipe_params
-      params(:recipe).permit(:name, :category_name, :instructions, :photo)
+      params.permit(:name, :category, :instructions, :preparation_time, :photo)
     end
 end
