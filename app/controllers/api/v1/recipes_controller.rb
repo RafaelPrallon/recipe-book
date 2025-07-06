@@ -8,18 +8,19 @@ class Api::V1::RecipesController < ApplicationController
     if @recipes.empty?
       render json: "There's no recipe available at the moment. Try adding some recipes", status: :ok
     else
-      render json: @recipes, status: :ok
+      recipes_array = RecipeSerializer.new(@recipes).serializable_hash[:data].map { |d| d[:attributes] }
+      render json: recipes_array, status: :ok
     end
   end
 
   def show
-    render json: @recipe, status: :ok
+    render json: RecipeSerializer.new(@recipe).serializable_hash[:data][:attributes], status: :ok
   end
 
   def create
     @recipe = Recipe.new(recipe_params)
     if @recipe.save
-      render json: @recipe, status: :created
+      render json: RecipeSerializer.new(@recipe).serializable_hash[:data][:attributes], status: :created
     else
       render json: @recipe.errors, status: :unprocessable_entity
     end
@@ -27,7 +28,7 @@ class Api::V1::RecipesController < ApplicationController
 
   def update
     if @recipe.update(recipe_params)
-      render json: @recipe
+      render json: RecipeSerializer.new(@recipe).serializable_hash[:data][:attributes]
     else
       render json: @recipe.errors, status: :unprocessable_entity
     end
@@ -35,6 +36,7 @@ class Api::V1::RecipesController < ApplicationController
 
   def destroy
     @recipe.destroy
+    render json: "Recipe successfuly removed", status: :ok
   end
 
   private
@@ -48,6 +50,6 @@ class Api::V1::RecipesController < ApplicationController
     end
 
     def recipe_params
-      params.permit(:name, :category, :instructions, :preparation_time, :photo)
+      params.permit(:name, :category, :ingredients, :instructions, :preparation_time, :photo)
     end
 end

@@ -26,18 +26,18 @@ category_name: the recipe's category
 The request has two possible outputs:
 one in which it returns a message saying that there's no recipe saved and a list of recipes. the response in the second case follows the format below:
 ```
-{
+[
     {
         "id": recipe_id,
         "name": recipe_name,
+        "category": category_name,
+        "ingredients": "a free text field listing all ingredients",
+        "instructions": "a free text field with instructions",
         "preparation_time": preparation time in minutes,
-        "ingredients": a free text field listing all ingredients,
-        "instructions": a free text field with instructions,
-        "created_at": creation_date,
-        "updated_at": update time,
-        "category": category name
+        "photo_url": link to original image,
+        "thumb_url": link to image scaled down to thumb size
     }
-}
+]
 ```
 
 ### get api/v1/recipes/:id
@@ -46,19 +46,89 @@ Finds a recipe with given id, returns the following format:
 {
     "id": recipe_id,
     "name": recipe_name,
+    "category": category_name,
+    "ingredients": "a free text field listing all ingredients",
+    "instructions": "a free text field with instructions",
     "preparation_time": preparation time in minutes,
-    "ingredients": a free text field listing all ingredients,
-    "instructions": a free text field with instructions,
-    "created_at": creation_date,
-    "updated_at": update time,
-    "category": category name
+    "photo_url": link to original image,
+    "thumb_url": link to image scaled down to thumb size
+}
+```
+
+### post api/v1/recipes
+Creates a new recipe receiving the following attributes:
+```
+{
+    name": recipe_name,
+    "category": category_name,
+    "ingredients": "a free text field listing all ingredients",
+    "instructions": "a free text field with instructions",
+    "preparation_time": preparation time in minutes,
+    "photo": link for photo
+}
+```
+obs: On Postman you can send an image as a parameters by sending the params on the form-data format and setting the "photo" param
+as a file
+
+In case of success, the request will return a json with the following format:
+```
+{
+    "id": recipe_id,
+    "name": recipe_name,
+    "category": category_name,
+    "ingredients": "a free text field listing all ingredients",
+    "instructions": "a free text field with instructions",
+    "preparation_time": preparation time in minutes,
+    "photo_url": link to original image,
+    "thumb_url": link to image scaled down to thumb size
+}
+```
+
+### patch api/v1/recipes/:id
+Finds a recipe with given id, update it's attributes and returns the following format:
+```
+{
+    "id": recipe_id,
+    "name": recipe_name,
+    "category": category_name,
+    "ingredients": "a free text field listing all ingredients",
+    "instructions": "a free text field with instructions",
+    "preparation_time": preparation time in minutes,
+    "photo_url": link to original image,
+    "thumb_url": link to image scaled down to thumb size
+```
+
+### delete api/v1/recipes/:id
+Finds a recipe with given id, and deletes it
+In case of success, it returns a message
+
+### There's similar endpoints for users but the input attributes currently are:
+```
+{
+    "name": username,
+    "email": email,
+    "avatar": link to image
+}
+```
+
+the output json will follow the format:
+```
+{
+    "id": user id,
+    "name": user name,
+    "email": user email,
+    "avatar_url": link to original image,
+    "thumb_url": link to image scaled down to thumb size
 }
 ```
 
 
+
 ## To do
-- Fix implementation of solid queue
+- Add authentication to user model
 - Add documentation to api through RDoc or another tool
+- Change format of ingredients attribute of recipe so it's of the json type
+- Link users and recipes
 
 ## Applied concepts
 

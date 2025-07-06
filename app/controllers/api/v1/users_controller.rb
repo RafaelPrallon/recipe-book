@@ -2,20 +2,20 @@ class Api::V1::UsersController < ApplicationController
   before_action :set_user, only: %i[ show update destroy ]
 
   def index
-    @users = User.with_attached_avatar.allx
-    @users = UserFilters.new(@users).call(search_params)
-    render json: @users, status: :ok
+    @users = User.with_attached_avatar.all
+    @users = UserFilters.new(@users, search_params).call if params[:search]
+    users_array = UserSerializer.new(@users).serializable_hash[:data].map { |d| d[:attributes] }
+    render json: users_array, users_array: :ok
   end
 
   def show
-    render json: @user, status: :ok
+    render json: UserSerializer.new(@user).serializable_hash[:data][:attributes], status: :ok
   end
 
   def create
     @user = User.new(user_params)
     if @user.save
-      UserProcessingService.new(user).send_initiation_email
-      render json: @user
+      render json: UserSerializer.new(@user).serializable_hash[:data][:attributes]
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -23,7 +23,7 @@ class Api::V1::UsersController < ApplicationController
 
   def update
     if @user.update(user_params)
-      render json: @user
+      render json: UserSerializer.new(@user).serializable_hash[:data][:attributes]
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -31,6 +31,8 @@ class Api::V1::UsersController < ApplicationController
 
   def destroy
     @user.destroy
+
+    render json: "User successfuly removed", status: :ok
   end
 
   private
@@ -40,10 +42,10 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def search_params
-    params(:search).permit(:name, :page_number, :per_page)
+    params.require(:search).permit(:name, :page_number, :per_page)
   end
 
   def user_params
-    params(:user).permit(:name, :email, :avatar)
+    params.permit(:name, :email, :avatar)
   end
 end

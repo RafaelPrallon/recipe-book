@@ -1,6 +1,5 @@
 source "https://rubygems.org"
 
-gem "image_processing", "~> 1.2"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.2"
 # Use sqlite3 as the database for Active Record
@@ -24,6 +23,10 @@ gem "solid_cable"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
+# Json serializing suggested by the ActiveModel::Serializer github
+# source: https://github.com/rails-api/active_model_serializers?tab=readme-ov-file#alternatives
+gem "jsonapi-serializer"
+
 # Deploy this application anywhere as a Docker container [https://kamal-deploy.org]
 gem "kamal", require: false
 
@@ -31,7 +34,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 1.2"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 gem "rack-cors"
